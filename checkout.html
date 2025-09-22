@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - ShopEase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: #f5f7fa; margin: 0; padding: 0; }
+    header { background: linear-gradient(135deg, #2c3e50, #1abc9c); color: #fff; padding: 1.5rem; text-align: center; }
+    header h1 { font-size: 1.8rem; }
+
+    .container { max-width: 900px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; flex-wrap: wrap; gap: 2rem; }
+    
+    .form-section, .summary-section { flex: 1; min-width: 300px; }
+
+    h2 { margin-bottom: 1rem; }
+    label { display: block; margin-top: 1rem; font-weight: 600; }
+    input, textarea, select {
+      width: 100%; padding: 0.7rem; margin-top: 0.5rem;
+      border: 1px solid #ddd; border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .cart-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eee; }
+    .cart-item:last-child { border-bottom: none; }
+    .total { margin-top: 1rem; font-size: 1.2rem; font-weight: bold; text-align: right; }
+
+    button {
+      margin-top: 1.5rem; padding: 0.9rem 1.3rem;
+      border: none; border-radius: 6px;
+      background: #1abc9c; color: #fff; font-weight: bold;
+      cursor: pointer; transition: 0.3s;
+      width: 100%;
+    }
+    button:hover { background: #16a085; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Checkout</h1>
+  </header>
+
+  <div class="container">
+    <!-- Checkout Form -->
+    <div class="form-section">
+      <h2>Billing Details</h2>
+      <form id="checkout-form">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+
+        <label for="address">Address</label>
+        <textarea id="address" rows="3" required></textarea>
+
+        <label for="payment">Payment Method</label>
+        <select id="payment" required>
+          <option value="">Select</option>
+          <option value="card">Credit/Debit Card</option>
+          <option value="upi">UPI</option>
+          <option value="cod">Cash on Delivery</option>
+        </select>
+
+        <button type="submit">Place Order</button>
+      </form>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="summary-section">
+      <h2>Order Summary</h2>
+      <div id="order-items"></div>
+      <div class="total" id="order-total"></div>
+    </div>
+  </div>
+
+  <script>
+    // Load order summary from cart
+    function loadOrderSummary() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const orderItems = document.getElementById("order-items");
+      const orderTotal = document.getElementById("order-total");
+      orderItems.innerHTML = "";
+      let total = 0;
+
+      if (cart.length === 0) {
+        orderItems.innerHTML = "<p>Your cart is empty. <a href='ecommerce.html'>Shop now</a></p>";
+        orderTotal.innerText = "";
+        return;
+      }
+
+      cart.forEach(item => {
+        total += item.price;
+        orderItems.innerHTML += `<div class="cart-item"><span>${item.product}</span><span>$${item.price}</span></div>`;
+      });
+
+      orderTotal.innerText = "Total: $" + total;
+    }
+
+    // Handle order submission
+    document.getElementById("checkout-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      // Get user details
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const address = document.getElementById("address").value;
+      const payment = document.getElementById("payment").value;
+
+      if (!name || !email || !address || !payment) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      // Clear cart after order
+      localStorage.removeItem("cart");
+
+      alert("Thank you, " + name + "! Your order has been placed successfully.");
+      window.location.href = "ecommerce.html"; // Redirect back to shop
+    });
+
+    loadOrderSummary();
+  </script>
+</body>
+</html>

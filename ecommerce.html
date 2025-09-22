@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopEase - E-commerce</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    .card img {
+  width: 100%;
+  height: 220px;              /* slightly taller for better display */
+  object-fit: contain;        /* keeps the full image visible */
+  padding: 10px;              /* adds space around image */
+  background: #f9f9f9;        /* light background for uniform look */
+  border-bottom: 1px solid #eee;
+}
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body { background: #f5f7fa; color: #333; }
+
+    header {
+      background: linear-gradient(135deg, #2c3e50, #1abc9c);
+      color: #fff; padding: 1.5rem; text-align: center;
+    }
+    header h1 { font-size: 2rem; }
+
+    nav {
+      margin-top: 1rem;
+    }
+    nav a {
+      color: #fff; margin: 0 1rem; font-weight: 600; text-decoration: none; position: relative;
+    }
+    nav a:hover::after {
+      content: ""; width: 100%; height: 2px; background: #fff;
+      position: absolute; bottom: -5px; left: 0;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+      background: #ecf0f1; padding: 0.8rem 2rem;
+      font-size: 0.9rem; margin-top: 0.5rem;
+    }
+    .breadcrumbs a {
+      text-decoration: none; color: #1abc9c; font-weight: 600;
+    }
+    .breadcrumbs span { color: #555; margin: 0 5px; }
+
+    .container { display: flex; gap: 2rem; padding: 2rem; }
+    .filters {
+      width: 250px; background: #fff; padding: 1rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .filters h3 { margin-bottom: 1rem; }
+    .filters label { display: block; margin-bottom: 0.5rem; }
+    .filters button {
+      margin-top: 1rem; padding: 0.6rem 1rem; border: none;
+      border-radius: 6px; background: #1abc9c; color: #fff;
+      font-weight: bold; cursor: pointer; transition: 0.3s;
+    }
+    .filters button:hover { background: #16a085; }
+
+    .products {
+      flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;
+    }
+    .card {
+      background: #fff; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s;
+    }
+    .card:hover { transform: translateY(-8px); }
+    .card img { width: 100%; height: 180px; object-fit: cover; }
+    .card-content { padding: 1rem; }
+    .card h4 { margin-bottom: 0.5rem; color: #1abc9c; }
+    .card p { font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .price { font-weight: bold; margin-bottom: 0.5rem; }
+    .add-cart {
+      display: inline-block; background: #1abc9c; color: #fff;
+      padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none; transition: 0.3s;
+    }
+    .add-cart:hover { background: #16a085; }
+
+    /* CART */
+    #cart {
+      background: #fff; padding: 2rem; margin: 2rem; border-radius: 12px; display: none;
+    }
+    #cart h2 { margin-bottom: 1rem; }
+    .cart-item { display: flex; justify-content: space-between; margin-bottom: 0.8rem; }
+
+    /* Checkout */
+    #checkout {
+      background: #fff; padding: 2rem; margin: 2rem; border-radius: 12px; display: none;
+    }
+    #checkout input {
+      width: 100%; padding: 0.8rem; margin: 0.5rem 0;
+      border: 1px solid #ccc; border-radius: 8px;
+    }
+    #checkout button {
+      background: #1abc9c; color: #fff; padding: 0.8rem; border: none; border-radius: 8px;
+      cursor: pointer; font-weight: bold; transition: 0.3s;
+    }
+    #checkout button:hover { background: #16a085; }
+
+    footer {
+      text-align: center; background: #2c3e50; color: #fff;
+      padding: 1rem; margin-top: 2rem;
+    }
+
+    @media (max-width: 800px) {
+      .container { flex-direction: column; }
+      .filters { width: 100%; }
+    }
+    
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>ShopEase</h1>
+    <p>Smart Shopping, Smarter Living</p>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#products">Products</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+    </nav>
+  </header>
+
+  <!-- Breadcrumbs -->
+  <div class="breadcrumbs">
+    <a href="#">Home</a> <span>›</span>
+    <a href="#products">Products</a> <span>›</span>
+    <span id="breadcrumb-category">All</span>
+  </div>
+
+  <div class="container">
+    <!-- Filters -->
+    <aside class="filters">
+      <h3>Filter Products</h3>
+      <label><input type="checkbox" class="category" value="Clothing"> Clothing</label>
+      <label><input type="checkbox" class="category" value="Electronics"> Electronics</label>
+      <label><input type="checkbox" class="category" value="Accessories"> Accessories</label>
+      <h3>Sort By</h3>
+      <select id="sort">
+        <option value="default">Default</option>
+        <option value="low-high">Price: Low to High</option>
+        <option value="high-low">Price: High to Low</option>
+      </select>
+      <button onclick="applyFilters()">Apply Filters</button>
+    </aside>
+
+    <!-- Products -->
+    <section class="products" id="products">
+      <div class="card" data-category="Clothing" data-price="120">
+        <img src="tshirt.png" alt="T-shirt">
+        <div class="card-content">
+          <h4>Casual T-Shirt</h4>
+          <p>Comfortable cotton t-shirt.</p>
+          <p class="price">$120</p>
+          <a href="#" class="add-cart" onclick="addToCart('Casual T-Shirt',120)">Add to Cart</a>
+        </div>
+      </div>
+      <div class="card" data-category="Electronics" data-price="650">
+        <img src="laptop.png" alt="Laptop">
+        <div class="card-content">
+          <h4>Laptop</h4>
+          <p>High-performance laptop for work.</p>
+          <p class="price">$650</p>
+          <a href="#" class="add-cart" onclick="addToCart('Laptop',650)">Add to Cart</a>
+        </div>
+      </div>
+      <div class="card" data-category="Accessories" data-price="80">
+        <img src="watch.png" alt="Watch">
+        <div class="card-content">
+          <h4>Smart Watch</h4>
+          <p>Track your fitness and time.</p>
+          <p class="price">$80</p>
+          <a href="#" class="add-cart" onclick="addToCart('Smart Watch',80)">Add to Cart</a>
+        </div>
+      </div>
+      <div class="card" data-category="Clothing" data-price="200">
+        <img src="jacket.png" alt="Jacket">
+        <div class="card-content">
+          <h4>Winter Jacket</h4>
+          <p>Stay warm in style.</p>
+          <p class="price">$200</p>
+          <a href="#" class="add-cart" onclick="addToCart('Winter Jacket',200)">Add to Cart</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CART -->
+  <section id="cart">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <button onclick="proceedToCheckout()">Proceed to Checkout</button>
+  </section>
+
+  <!-- CHECKOUT -->
+  <section id="checkout">
+    <h2>Checkout</h2>
+    <input type="text" placeholder="Full Name" required>
+    <input type="email" placeholder="Email" required>
+    <input type="text" placeholder="Address" required>
+    <button onclick="confirmOrder()">Confirm Order</button>
+  </section>
+
+  <footer>
+    <p>© 2025 ShopEase | Designed by Yogasri K</p>
+  </footer>
+
+  <script>
+    let cart = [];
+  function addToCart(product, price) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push({ product, price });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert(product + " added to cart!");
+    window.location.href = "cart.html"; // Redirect to cart page
+  }
+    function displayCart() {
+      const cartItems = document.getElementById("cart-items");
+      cartItems.innerHTML = "";
+      cart.forEach(item => {
+        cartItems.innerHTML += `<div class="cart-item"><span>${item.product}</span> <span>$${item.price}</span></div>`;
+      });
+    }
+
+    function proceedToCheckout() {
+      document.getElementById("cart").style.display = "none";
+      document.getElementById("checkout").style.display = "block";
+    }
+
+    function confirmOrder() {
+      alert("Thank you! Your order has been placed.");
+      cart = [];
+      document.getElementById("checkout").style.display = "none";
+    }
+
+    // FILTER & SORT
+    function applyFilters() {
+      const selectedCategories = Array.from(document.querySelectorAll(".category:checked")).map(cb => cb.value);
+      const sortValue = document.getElementById("sort").value;
+      const products = document.querySelectorAll(".card");
+
+      // Update breadcrumbs
+      document.getElementById("breadcrumb-category").innerText = selectedCategories.length ? selectedCategories.join(", ") : "All";
+
+      // Filter
+      products.forEach(product => {
+        const category = product.getAttribute("data-category");
+        if (selectedCategories.length === 0 || selectedCategories.includes(category)) {
+          product.style.display = "block";
+        } else {
+          product.style.display = "none";
+        }
+      });
+
+      // Sort
+      const productContainer = document.getElementById("products");
+      let sortedProducts = Array.from(products).filter(p => p.style.display !== "none");
+
+      if (sortValue === "low-high") {
+        sortedProducts.sort((a, b) => a.getAttribute("data-price") - b.getAttribute("data-price"));
+      } else if (sortValue === "high-low") {
+        sortedProducts.sort((a, b) => b.getAttribute("data-price") - a.getAttribute("data-price"));
+      }
+
+      sortedProducts.forEach(p => productContainer.appendChild(p));
+    }
+  </script>
+</body>
+</html>
